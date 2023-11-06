@@ -4,47 +4,68 @@
 #include <ctype.h>
 #include "file_utils.h"
 
-char *length;
+
 
 char *getFileContents(const char *filePath) {
 
-    FILE *current = fopen(filePath, "r");
-
-    if(filePath == NULL) {
+    FILE *contents = fopen(filePath, "r");
+    if(contents == NULL){
         return NULL;
     }
 
-    fseek(current, 0, SEEK_END);
+    int counter = 0;
+    while(fgetc(contents) != EOF){
+        counter++;
+    }
+    fclose(contents);
+    contents = fopen(filePath, "r");
 
-    while (feof(current) != 1) {
-        fread(length, sizeof(length), 1, current);
+    char *newString = (char *)malloc(sizeof(char *) * counter + 1);
+    for(int i = 0; i < counter; i++){
+        newString[i] = fgetc(contents);
     }
 
-    fclose(current);
+    newString[counter] = '\0';
 
-    return length;
+    fclose(contents);
+
+    return newString;
 }
 
 
 char **getFileLines(const char *filePath, int *numLines) {
+    FILE *contents = fopen(filePath, "r");
 
-
-    char **files = (char **)malloc(sizeof(char *) * *numLines);
-    for (int i = 0; i < *numLines; i++) {
-        files[i] = (char *)malloc(sizeof(char) * sizeof(length));
+    char c = fgetc(contents);
+    int counter = 0;
+    int buffer = 0;
+    int buffer2 = 0;
+    for(c = getc(contents); c != EOF; c = getc(contents)){
+        if (c == '\n'){
+            counter++;
+            if(buffer < buffer2){
+                buffer = buffer2;
+            }
+        }
+        buffer2++;
     }
 
-    FILE *current = fopen(filePath, "r");
+    fclose(contents);
+    contents = fopen(filePath, "r");
 
-    if( filePath == NULL || numLines == NULL) {
-        return NULL;
+
+    char **newString = (char **)malloc(sizeof(char *) * counter);
+    for(int i = 0; i < counter; i++){
+        newString[i] = (char *)malloc(sizeof(char*) * buffer);
     }
 
-    int i = 0;
-    while(fscanf(current, "%s", length) == 1) {
-        strcpy(files[i], length);
-        i++;
+    for(int i = 0; i < counter; i++){
+        fgets(newString[i], buffer, contents);
+        newString[i][strlen(newString[i]) - 1] = '\0';
     }
-    fclose(current);
-    return files;
+
+    fclose(contents);
+
+    *numLines = counter;
+    return newString;
 }
