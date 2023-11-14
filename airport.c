@@ -46,7 +46,7 @@ double latitude,double longitude, int elevationFeet,const char* city, const char
     strcpy(airport->city, city);
 
     airport->countryAbbrv = (char *)malloc(sizeof(char) * (strlen(countryAbbrv) + 1));
-    strcpy(airport->countryAbbrv, name);
+    strcpy(airport->countryAbbrv, countryAbbrv);
 
     return airport;
 }
@@ -74,7 +74,7 @@ double latitude, double longitude, int elevationFeet, const char* city, const ch
     strcpy(airport->city, city);
 
     airport->countryAbbrv = (char *)malloc(sizeof(char) * (strlen(countryAbbrv) + 1));
-    strcpy(airport->countryAbbrv, name);
+    strcpy(airport->countryAbbrv, countryAbbrv);
 
     return;
 }
@@ -85,14 +85,16 @@ char* airportToString(const Airport* a) {
         strcpy(result, "(null)");
         return result;
     }
+    char buffer[100];
     // compute the number of characters needed
-    int n = strlen(a->gpsId) + strlen(a->type) + strlen(a->name) + 10 + 10 + 10 + strlen(a->city) + strlen(a->countryAbbrv);
+    //int n = strlen(a->gpsId) + strlen(a->type) + strlen(a->name) + 10 + 10 + 10 + strlen(a->city) + strlen(a->countryAbbrv);
 
+    int n = snprintf(buffer, 100, "%s %s %s %lf %lf %d %s %s", a->gpsId, a->type, a->name, a->latitude, a->longitude, a->elevationFeet, a->city, a->countryAbbrv);
     // create a result string
     char *str = (char *)malloc(sizeof(char) * n);
 
     // format the aiport into the temporary string
-    sprintf(str, "%s %s %s %lf %lf %d %s %s \n", a->gpsId, a->type, a->name, a->latitude, a->longitude, a->elevationFeet, a->city, a->countryAbbrv);
+    sprintf(str, "%s %s %s %.2lf %.2lf %d %s %s", a->gpsId, a->type, a->name, a->latitude, a->longitude, a->elevationFeet, a->city, a->countryAbbrv);
 
     return str;
 }
