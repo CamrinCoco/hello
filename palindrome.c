@@ -29,5 +29,15 @@ int main(int argc, char **argv) {
 }
 
 int isPalindrome(const char *str, int leftIndex, int rightIndex) {
-  // TODO: implement this function as specified
+  //checks to see if the characters are equal
+  if (str[leftIndex] != str[rightIndex]){
+    return 0;
+  }
+  //checks to see if indexes cross
+  if (leftIndex == rightIndex || rightIndex < leftIndex){
+    return 1;
+  }
+  //repeats on inner indices until error or indexes cross
+  return isPalindrome(str, leftIndex + 1, rightIndex - 1);
+
 }
