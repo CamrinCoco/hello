@@ -1,3 +1,15 @@
+/* Authors: Camrin Coco and Jackson Wiese
+
+Purpose: To create and establish structures for for use with the airport structure.
+Also to create airpot fucntions using the structure.
+
+Date: 11/10/2023
+
+*/
+
+
+
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -12,7 +24,7 @@ Airport * createEmptyAirport() {
 
 Airport* createAirport(const char* gpsId,const char* type, const char* name,
 double latitude,double longitude, int elevationFeet,const char* city, const char* countryAbbrv) {
-
+    //creates an unestablished airport structure
     Airport * airport = (Airport *)malloc(sizeof(Airport) * 1);
 
     airport->gpsId = (char *)malloc(sizeof(char) * (strlen(gpsId) + 1));
@@ -42,6 +54,7 @@ double latitude,double longitude, int elevationFeet,const char* city, const char
 void initAirport(Airport* airport, const char* gpsId, const char* type, const char* name,
 double latitude, double longitude, int elevationFeet, const char* city, const char* countryAbbrv) {
 
+    //establishes an aiport structure, from an already created airport structure
     airport->gpsId = (char *)malloc(sizeof(char) * (strlen(gpsId) + 1));
     strcpy(airport->gpsId, gpsId);
 
@@ -72,18 +85,21 @@ char* airportToString(const Airport* a) {
         strcpy(result, "(null)");
         return result;
     }
+    // compute the number of characters needed
+    int n = strlen(a->gpsId) + strlen(a->type) + strlen(a->name) + 10 + 10 + 10 + strlen(a->city) + strlen(a->countryAbbrv);
 
-    int n = strlen(a->gpsId) + strlen(a->type) + strlen(a->name) + 8 + 8 + 5 + strlen(a->city) + strlen(a->countryAbbrv);
-
+    // create a result string
     char *str = (char *)malloc(sizeof(char) * n);
 
-    sprintf(str, "%s %s %s %f %f %d %s %s", a->gpsId, a->type, a->name, a->latitude, a->longitude, a->elevationFeet, a->city, a->countryAbbrv);
+    // format the aiport into the temporary string
+    sprintf(str, "%s %s %s %lf %lf %d %s %s \n", a->gpsId, a->type, a->name, a->latitude, a->longitude, a->elevationFeet, a->city, a->countryAbbrv);
 
     return str;
 }
 
 double getAirDistance(const Airport* origin, const Airport* destination) {
 
+    //calculates airport distance from two different locations using the airport structures
     double degrees = 180.0 / M_PI;
     double distance = acos(sin(origin->latitude * degrees) * sin(destination->latitude * degrees) + cos(origin->latitude * degrees) * cos(destination->latitude * degrees) * cos((destination->longitude * degrees) - (origin->longitude * degrees))) * 6371.0;
 
@@ -92,15 +108,13 @@ double getAirDistance(const Airport* origin, const Airport* destination) {
 
 double getEstimatedTravelTime(const Airport* stops, int size, double aveKmsPerHour, double aveLayoverTimeHrs) {
 
+    //calculates estimated distance over the total trip
     double distance = 0;
-    for(int i = 0; i < size - 1; i++){
-        distance += getAirDistance(stops[i], stops[i + 1]);
+    for(int i = size; i > 0; i--){
+        distance += getAirDistance(stops - i, stops - i + 1);
     }
-
+    //gets the travel time over the whole trip distance
     double travelTime = distance / aveKmsPerHour + (aveLayoverTimeHrs * (size - 1));
 
     return travelTime;
 }
-
-
-
