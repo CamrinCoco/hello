@@ -11,7 +11,7 @@ long long jacobsthalIterative(int n);
 //TODO: place your prototype and documentation here
 //      Hint: it should return a long long (integers)
 //            it should take a cache (array) of long longs as well
-
+long long jacobsthalM(long long *arr, int n);
 /**
  * This program computes the n-th Jacobsthal number using recursion.
  * It also reports how long the program takes to execute.
@@ -24,6 +24,17 @@ int main(int argc, char **argv) {
     exit(1);
   }
   int n = atoi(argv[1]);
+
+
+  long long *arr = (long long * )malloc(sizeof(long long)* n +1);
+
+  for(int i = 0; i<n+1; i++){
+    arr[i] =-1;
+  }
+  arr[0]=0;
+  arr[1]=1;
+
+
 
   //TODO: set up our table/cache which is of size n + 1 since we
   //compute values from J(0) to J(n) inclusive
@@ -38,7 +49,7 @@ int main(int argc, char **argv) {
 
   start = time(NULL);
 
-  //TODO: call your function here
+  long long memoizationResult = jacobsthalM(arr, n);
 
   end = time(NULL);
 
@@ -53,6 +64,13 @@ int main(int argc, char **argv) {
 }
 
 //TODO: write your memoization-based Jacobsthal function here
+long long jacobsthalM(long long * arr, int n){
+  if(arr[n] == -1){
+    arr[n] = jacobsthalM(arr,n-1) + 2*jacobsthalM(arr,n-2);
+  }
+  return arr[n];
+}
+
 
 long long jacobsthalIterative(int n) {
   if(n <= 1) {
